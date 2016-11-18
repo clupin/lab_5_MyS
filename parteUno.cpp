@@ -3,7 +3,6 @@
 #include <chrono>       // std::chrono
 #include <random>       // std::default_random_engine
 #include <vector>
-#include "parteUno.h"   // para conexion
 
 #define M_PI 3.14159265358979323846
 using namespace std;
@@ -65,6 +64,29 @@ class punto{
         }
 };
 
+class numero{
+    private:
+        double x;
+        int y; //y es para el intervalo que pertenece
+    public:
+        void Leer(double &x2, int &y2){
+            x2 = x;
+            y2 = y;
+        }
+        void Guardar(double x2){
+            x = x2;
+        }
+        int VerificarIntervalo(vector<double> lim_sup, int &resp){
+            for(int i=0; i<lim_sup.size(); i++){
+                if(x<lim_sup.at(i)){
+                    y=i;
+                    resp=i;
+                    i=100;
+                }
+            }
+        }
+};
+
 void printLista(vector<punto> lista_puntos){
     double x, y, z, w;
     for(int i=0; i<lista_puntos.size(); i++){
@@ -75,6 +97,19 @@ void printLista(vector<punto> lista_puntos){
         cout<<"\tz: "<<z<<endl;
         cout<<"\tw: "<<w<<endl;
     }
+}
+
+double mean_lista(vector<numero> lista_numeros){
+    double acum=0;
+    int cantidad = lista_numeros.size();
+    for(int i=0; i<cantidad; i++){
+        double x;
+        int y;
+        lista_numeros.at(i).Leer(x,y);
+        acum += y;
+    }
+    double mean = acum/cantidad;
+    return mean;
 }
 
 double integral_1(int cantidad_puntos, double inte[]){
@@ -218,6 +253,28 @@ double pi(int cantidad_puntos, double r){
     return valor_pi;
 }
 
+double problema(int cantidad_puntos, vector<int> licencias, vector<double> lim_sup){
+
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    default_random_engine generator (seed); //Generador de número aleatorio
+    uniform_real_distribution<double> aleatorio(0, 1); //generador de valores para valores aleatorios entre 0 y 1
+
+    vector<numero> lista_numeros;
+    for(int i=0; i<cantidad_puntos; i++){
+        numero n;
+        //crear puntos
+        double x = aleatorio(generator);
+        n.Guardar(x);
+        for(int j=0; j<lim_sup.size(); j++){
+            int resp=0;
+            n.VerificarIntervalo(lim_sup, resp);
+            lista_numeros.push_back(n);
+        }
+    }
+    double promedio = mean_lista(lista_numeros);
+    return promedio;
+}
+
 int main(){
 
     //2.1.1 Estimaciones
@@ -240,6 +297,12 @@ int main(){
     double inte_3[2] = {0.0, 2.0};
     double valor_int_3 = integral_3(puntos, inte_1, inte_2, inte_3);
     cout<<"Valor de la integral 3, estimado con "<<puntos<<" puntos, es de: "<<valor_int_3<<endl;
+
+    int cantidad_puntos = 1000;
+    vector<int> licencias = {100, 150, 200, 250, 300};
+    vector<double> lim_sup = {0.3, 0.5, 0.8, 0.95, 1};
+    double prob = problema(cantidad_puntos, licencias, lim_sup);
+    cout<<"Problema: "<<prob<<endl;
 
 
     return 0;
