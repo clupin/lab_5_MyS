@@ -1,8 +1,15 @@
 #include <iostream>     // std::cout
+#include <stdlib.h>
 #include <vector>       // std::vector
 #include <chrono>       // std::chrono
 #include <random>       // std::default_random_engine
 #include <vector>
+
+#ifdef _WIN32
+#   define CLEAR system ("cls")
+#else
+#   define CLEAR system ("clear")
+#endif
 
 #define M_PI 3.14159265358979323846
 using namespace std;
@@ -279,32 +286,102 @@ int main(){
 
     //2.1.1 Estimaciones
     int puntos=5000;
-    int radio_pi=1.0;
-    double valor_pi = pi(puntos,radio_pi);
-    cout<<"Valor de pi, estimado con "<<puntos<<" puntos, es de: "<<valor_pi<<endl;
-
-    double inte_1[2] = {0.0, 10.0};
-    double valor_int_1 = integral_1(puntos,inte_1);
-    cout<<"Valor de la integral 1, estimado con "<<puntos<<" puntos, es de: "<<valor_int_1<<endl;
-
-    inte_1[0] = 2.0; inte_1[1] = 25.0;
-    double inte_2[2] = {0.0, 17.0};
-    double valor_int_2 = integral_2(puntos, inte_1, inte_2);
-    cout<<"Valor de la integral 2, estimado con "<<puntos<<" puntos, es de: "<<valor_int_2<<endl;
-
-    inte_1[0] = 0.0; inte_1[1] = 5.0;
-    inte_2[0] = 0.0; inte_2[1] = 10.0;
-    double inte_3[2] = {0.0, 2.0};
-    double valor_int_3 = integral_3(puntos, inte_1, inte_2, inte_3);
-    cout<<"Valor de la integral 3, estimado con "<<puntos<<" puntos, es de: "<<valor_int_3<<endl;
-
-    int cantidad_puntos = 1000;
-    vector<int> licencias = {100, 150, 200, 250, 300};
-    vector<double> lim_sup = {0.3, 0.5, 0.8, 0.95, 1};
-    double prob = problema(cantidad_puntos, licencias, lim_sup);
-    cout<<"Problema: "<<prob<<endl;
-
-
+    int decision = -1;
+    string a="";
+    int loop = 1;
+    double inte_1[2], inte_2[2], inte_3[2];
+    while(loop == 1){
+        cout<<"\nIngrese: \n1) Estimar el valor de pi \n2) Estimar la primera integral"<<endl;
+        cout<<"3) Estimar la segunda integral \n4) Estimar la tercera integral"<<endl;
+        cout<<"5) Realizar el analisis del problema \n0) Salir"<<endl;
+        cin>>decision;
+        CLEAR;
+        switch(decision){
+            case 0:{
+                cout<<"Ud. ha decidido salir"<<endl;
+                loop = 0;
+                break;
+            }
+            case 1:{
+                cout<<"Indique la cantidad de puntos con la que desea estimar el valor de pi:"<<endl;
+                cin>>puntos;
+                while(cin.fail()){
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cout<<"Por favor ingrese un numero"<<endl;
+                    cin>>puntos;
+                }
+                int radio_pi=1.0;
+                double valor_pi = pi(puntos,radio_pi);
+                cout<<"Valor de pi, estimado con "<<puntos<<" puntos, es de: "<<valor_pi<<endl;
+                break;
+            }
+            case 2:{
+                cout<<"Indique la cantidad de puntos con la que desea estimar el valor de la primera integral:"<<endl;
+                cin>>puntos;
+                while(cin.fail()){
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cout<<"Por favor ingrese un numero"<<endl;
+                    cin>>puntos;
+                }
+                inte_1[0] = 0.0; inte_1[1] = 10.0;
+                double valor_int_1 = integral_1(puntos,inte_1);
+                cout<<"Valor de la integral 1, estimado con "<<puntos<<" puntos, es de: "<<valor_int_1<<endl;
+                break;
+            }
+            case 3:{
+                cout<<"Indique la cantidad de puntos con la que desea estimar el valor de la segunda integral:"<<endl;
+                cin>>puntos;
+                while(cin.fail()){
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cout<<"Por favor ingrese un numero"<<endl;
+                    cin>>puntos;
+                }
+                inte_1[0] = 2.0; inte_1[1] = 25.0;
+                inte_2[0] = 0.0; inte_2[1] = 17.0;
+                double valor_int_2 = integral_2(puntos, inte_1, inte_2);
+                cout<<"Valor de la integral 2, estimado con "<<puntos<<" puntos, es de: "<<valor_int_2<<endl;
+                break;
+            }
+            case 4:{
+                cout<<"Indique la cantidad de puntos con la que desea estimar el valor de la tercera integral:"<<endl;
+                cin>>puntos;
+                while(cin.fail()){
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cout<<"Por favor ingrese un numero"<<endl;
+                    cin>>puntos;
+                }
+                inte_1[0] = 0.0; inte_1[1] = 5.0;
+                inte_2[0] = 0.0; inte_2[1] = 10.0;
+                inte_3[0] = 0.0; inte_3[1] = 2.0;
+                double valor_int_3 = integral_3(puntos, inte_1, inte_2, inte_3);
+                cout<<"Valor de la integral 3, estimado con "<<puntos<<" puntos, es de: "<<valor_int_3<<endl;
+                break;
+            }
+            case 5:{
+                cout<<"Indique la cantidad de puntos con la que desea estimar el problema:"<<endl;
+                cin>>puntos;
+                while(cin.fail()){
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cout<<"Por favor ingrese un numero"<<endl;
+                    cin>>puntos;
+                }
+                vector<int> licencias = {100, 150, 200, 250, 300};
+                vector<double> lim_sup = {0.3, 0.5, 0.8, 0.95, 1};
+                double prob = problema(puntos, licencias, lim_sup);
+                cout<<"Se propone comprar: "<<licencias.at(ceil(prob))<<" licencias."<<endl;
+                break;
+            }
+            default: {
+                cout<<"No ingresó una opción válida, vuelva a ejecutar el programa."<<endl;
+                break;
+            }
+        }
+    }
     return 0;
 }
 
